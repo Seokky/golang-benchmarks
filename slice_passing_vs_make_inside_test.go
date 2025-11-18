@@ -27,22 +27,20 @@ func (r ReaderWithSliceReturn) Read(n int) ([]byte, error) {
 	return p, nil
 }
 
-// Different performance with for-i
-
 func BenchmarkSliceWithArgument(b *testing.B) {
 	for b.Loop() {
 		p := make([]byte, bufferSize)
 		reader := ReaderWithSliceArgument{}
-		_, _ = reader.Read(p)
+		reader.Read(p)
 	}
 }
 
 func BenchmarkSliceWithReturn(b *testing.B) {
 	for b.Loop() {
 		reader := ReaderWithSliceReturn{}
-		_, _ = reader.Read(bufferSize)
+		reader.Read(bufferSize)
 	}
 }
 
-//BenchmarkSliceWithArgument-10           100000000               11.65 ns/op            0 B/op          0 allocs/op
-//BenchmarkSliceWithReturn-10             48465021                24.02 ns/op           32 B/op          1 allocs/op
+// BenchmarkSliceWithArgument-10           100000000               11.65 ns/op            0 B/op          0 allocs/op
+// BenchmarkSliceWithReturn-10             48465021                24.02 ns/op           32 B/op          1 allocs/op

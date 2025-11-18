@@ -25,15 +25,15 @@ func NewDataByPointer() *Data {
 
 func BenchmarkReturnByValue(b *testing.B) {
 	for b.Loop() {
-		_ = NewDataByValue()
+		NewDataByValue()
 	}
 }
 
 func BenchmarkReturnByPointer(b *testing.B) {
 	for b.Loop() {
-		_ = NewDataByPointer()
+		NewDataByPointer()
 	}
 }
 
-//BenchmarkReturnByValue-10       82020322                14.46 ns/op            0 B/op          0 allocs/op
-//BenchmarkReturnByPointer-10      8881662               137.3 ns/op           896 B/op          1 allocs/op
+// BenchmarkReturnByValue-10       82020322                14.46 ns/op            0 B/op          0 allocs/op
+// BenchmarkReturnByPointer-10      8881662               137.3 ns/op           896 B/op          1 allocs/op

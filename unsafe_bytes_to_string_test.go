@@ -7,28 +7,41 @@ import (
 	"unsafe"
 )
 
-func ToString(bytes []byte) string {
+func BenchmarkSafeToString(b *testing.B) {
+	bytes := []byte("Hello World")
+	for b.Loop() {
+		result = string(bytes)
+	}
+}
+
+func BenchmarkUnsafeToStringWithPtr(b *testing.B) {
+	bytes := []byte("Hello World")
+	for b.Loop() {
+		result = ToStringWithUnsafePointer(bytes)
+	}
+}
+
+func BenchmarkUnsafeToStringWithoutPtr(b *testing.B) {
+	bytes := []byte("Hello World")
+	for b.Loop() {
+		result = ToStringWithUnsafeString(bytes)
+	}
+}
+
+func ToStringWithUnsafePointer(bytes []byte) string {
 	return *(*string)(unsafe.Pointer(&bytes))
 }
 
-func BenchmarkSafeToString(b *testing.B) {
-	bytes := []byte("Hello World")
-	for i := 0; i < b.N; i++ {
-		_ = string(bytes)
+func ToStringWithUnsafeString(bytes []byte) string {
+	if len(bytes) == 0 {
+		return ""
 	}
+
+	return unsafe.String(unsafe.SliceData(bytes), len(bytes))
 }
 
-func BenchmarkUnsafeToString(b *testing.B) {
-	bytes := []byte("Hello World")
-	for i := 0; i < b.N; i++ {
-		_ = ToString(bytes)
-	}
-}
+var result string
 
-// for i := 0; i < b.N; i++
-//BenchmarkSafeToString-10        453318574                2.501 ns/op           0 B/op          0 allocs/op
-//BenchmarkUnsafeToString-10      1000000000               0.3118 ns/op          0 B/op          0 allocs/op
-
-// for b.Loop()
-//BenchmarkSafeToString-10        471675787                2.509 ns/op           0 B/op          0 allocs/op
-//BenchmarkUnsafeToString-10      588611592                2.066 ns/op           0 B/op          0 allocs/op
+// BenchmarkSafeToString-10                        98654934                12.25 ns/op           16 B/op          1 allocs/op
+// BenchmarkUnsafeToStringWithPtr-10               585261528                2.056 ns/op           0 B/op          0 allocs/op
+// BenchmarkUnsafeToStringWithoutPtr-10            592686736                2.029 ns/op           0 B/op          0 allocs/op

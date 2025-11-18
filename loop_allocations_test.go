@@ -4,26 +4,23 @@ import "testing"
 
 // go test -bench=. -benchmem ./loop_allocations_test.go
 
-//go:noinline
 func Init(value *int) {
 	*value = 1
 }
 
-// Different performance with b.Loop()
-
 func BenchmarkWithoutLoopAllocation(b *testing.B) {
 	var value int
-	for n := 0; n < b.N; n++ {
+	for b.Loop() {
 		Init(&value)
 	}
 }
 
 func BenchmarkWithLoopAllocation(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for b.Loop() {
 		var value int
 		Init(&value)
 	}
 }
 
-//BenchmarkWithoutLoopAllocation-10       1000000000               0.9435 ns/op          0 B/op          0 allocs/op
-//BenchmarkWithLoopAllocation-10          593888028                2.036 ns/op           0 B/op          0 allocs/op
+// BenchmarkWithoutLoopAllocation-10       581843455                2.025 ns/op           0 B/op          0 allocs/op
+// BenchmarkWithLoopAllocation-10          587393434                2.033 ns/op           0 B/op          0 allocs/op
